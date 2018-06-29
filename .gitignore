@@ -1,0 +1,9 @@
+# Ignore .DS_Store
+.DS_STORE
+
+# Ignore local IntelliJ IDEA directories and fiels
+.idea/
+*.iml
+
+# Ignore target/ directory
+target/
