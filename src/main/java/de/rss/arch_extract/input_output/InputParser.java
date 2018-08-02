@@ -5,11 +5,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import de.rss.arch_extract.resources.ServiceDependency;
+import de.rss.arch_extract.resources.trace.Process;
 import de.rss.arch_extract.resources.trace.Reference;
 import de.rss.arch_extract.resources.trace.Span;
 import de.rss.arch_extract.resources.trace.Trace;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class InputParser {
 
@@ -184,7 +187,7 @@ public class InputParser {
 
                 // Create process map
                 JsonObject processes = trace.get("processes").getAsJsonObject();
-                Map<String, String> processMap = new HashMap<String, String>();
+                List<Process> processList = new ArrayList<Process>();
 
                 boolean hasNext = true;
                 int i = 1;
@@ -192,7 +195,9 @@ public class InputParser {
                     String processName = "p" + String.valueOf(i);
                     try {
                         String service = processes.get(processName).getAsJsonObject().get("serviceName").getAsString();
-                        processMap.put(processName, service);
+                        String hostName = processes.get(processName).getAsJsonObject().get("tags").getAsJsonArray().get(0).getAsJsonObject().get("value").getAsString();
+                        Process process = new Process(processName, service, hostName);
+                        processList.add(process);
                     } catch (Exception e) {
                         hasNext = false;
                     }
@@ -201,8 +206,17 @@ public class InputParser {
 
                 // Set serviceName for each span in this trace
                 for (Span span : newTrace.getSpans()) {
-                    String name = processMap.get(span.getProcessID());
-                    span.setServiceName(name);
+                    String sName = null;
+                    String hostName = null;
+
+                    for (Process process : processList) {
+                        if (process.getProcessId().equals(span.getProcessID())) {
+                            sName = process.getServiceName();
+                            hostName = process.getHostName();
+                            span.setServiceName(sName);
+                            span.setHostName(hostName);
+                        }
+                    }
                 }
 
                 // Add trace to traces list

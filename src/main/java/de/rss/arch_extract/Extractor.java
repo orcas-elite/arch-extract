@@ -10,7 +10,9 @@ import de.rss.arch_extract.resources.trace.Span;
 import de.rss.arch_extract.resources.trace.Trace;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Extractor {
 
@@ -104,6 +106,8 @@ public class Extractor {
             return;
         }
 
+        Map<String, Integer> serviceInstanceMap = new HashMap<String, Integer>();
+
         for (Trace trace : traces) {
             if ((trace == null) || (trace.getSpans() == null)) {
                 System.out.println("Can't get dependency for service " + service.getName() + " because trace is null or doesn't contain spans");
@@ -125,6 +129,17 @@ public class Extractor {
 
                 if (span.getOperationName().equals("GET") || span.getOperationName().equals("errorHtml")) {
                     continue;
+                }
+
+                // Check hosts
+                if (span.getHostName() != null) {
+                    Microservice microservice = findService(span.getServiceName());
+
+                    if (microservice != null) {
+                        if (!microservice.containsHost(span.getHostName())) {
+                            microservice.addHost(span.getHostName());
+                        }
+                    }
                 }
 
                 // Check for circuit breaker
@@ -190,6 +205,7 @@ public class Extractor {
 
         return null;
     }
+
 
     private Operation findOperation(String operationName, Microservice service) {
         if (service != null && operationName != null) {
@@ -287,6 +303,13 @@ public class Extractor {
         for (Microservice ms : extractor.getServices()) {
             System.out.println("Getting operation dependencies for service " + ms.getName() + " ...");
             extractor.getDependencies(ms);
+        }
+
+        System.out.println("Getting number of instances for every service ...");
+
+        // Get number of instances for every service
+        for (Microservice ms : extractor.getServices()) {
+            ms.setInstances(ms.getHosts().size());
         }
 
         // Create architecture model and write it in a file

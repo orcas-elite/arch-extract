@@ -10,13 +10,17 @@ public class Microservice {
     private int capacity;
     private List<Operation> operations;
 
+    private transient List<String> hosts;
+
     public Microservice() {
         operations = new ArrayList<Operation>();
+        hosts = new ArrayList<String>();
     }
 
     public Microservice(String name) {
         this.name = name;
         operations = new ArrayList<Operation>();
+        hosts = new ArrayList<String>();
     }
 
     public String getName() {
@@ -61,5 +65,24 @@ public class Microservice {
 
     public void addOperation(Operation operation) {
         operations.add(operation);
+    }
+
+    public List<String> getHosts() {
+        return hosts;
+    }
+
+    public void setHosts(List<String> hosts) {
+        this.hosts = hosts;
+    }
+
+    public void addHost(String host) {
+        this.hosts.add(host);
+    }
+
+    public boolean containsHost(String host) {
+        if (hosts.contains(host)) {
+            return true;
+        }
+        return false;
     }
 }

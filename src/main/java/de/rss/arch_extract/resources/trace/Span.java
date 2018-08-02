@@ -7,6 +7,7 @@ public class Span {
     private String operationName;
     private Reference reference;
     private String serviceName;
+    private String hostName;
     private String processID;
     private boolean circuitBreaker;
     private boolean circuitBreakerFallback;
@@ -54,6 +55,14 @@ public class Span {
 
     public void setServiceName(String serviceName) {
         this.serviceName = serviceName;
+    }
+
+    public String getHostName() {
+        return hostName;
+    }
+
+    public void setHostName(String hostName) {
+        this.hostName = hostName;
     }
 
     public String getProcessID() {
