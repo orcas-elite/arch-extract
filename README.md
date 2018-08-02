@@ -6,7 +6,7 @@ The program retrieves traces from jaeger and processes them to build an architec
 
 ## How to use it?
 The program expects the jaeger-client to run on *localhost:16686* and retrieves the necessary data automatically from jaeger upon execution.
-The created architecutre model is saved as *architecture_model.json* in the project directory.
+The created architecture model is saved as *architecture_model.json* in the project directory.
 
 To save the data that is retrieved from jaeger add the program argument **-b**. The data is then stored in the *example* directory.
 Careful, the content of this directory will get replaced every time that the program is executed with this argument.
