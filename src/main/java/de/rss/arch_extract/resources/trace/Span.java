@@ -15,6 +15,7 @@ public class Span {
     public Span(String traceID, String spanID) {
         this.traceID = traceID;
         this.spanID = spanID;
+        this.circuitBreaker = false;
     }
 
     public String getTraceID() {

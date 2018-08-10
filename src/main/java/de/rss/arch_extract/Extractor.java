@@ -80,7 +80,7 @@ public class Extractor {
         InputManager man = createInputManager();
         List<String> operationNames = man.getOperations(service.getName());
         for (String name : operationNames) {
-            if (!name.equals("GET") && !name.equals("errorHtml")) {
+            if (!name.equals("GET") && !name.equals("POST") && !name.equals("PATCH") && !name.equals("errorHtml")) {
                 Operation op = new Operation(name);
                 op.setDemand(100);
                 service.addOperation(op);
@@ -127,7 +127,7 @@ public class Extractor {
                     continue;
                 }
 
-                if (span.getOperationName().equals("GET") || span.getOperationName().equals("errorHtml")) {
+                if (span.getOperationName().equals("GET") || span.getOperationName().equals("PATCH") || span.getOperationName().equals("POST") || span.getOperationName().equals("errorHtml")) {
                     continue;
                 }
 
@@ -142,12 +142,15 @@ public class Extractor {
                     }
                 }
 
+                String operationName = span.getOperationName();
+                Microservice microservice = findService(span.getServiceName());
+                Operation operation = findOperation(operationName, microservice);
+
                 // Check for circuit breaker
                 if (span.isCircuitBreaker()) {
-                    String operationName = span.getOperationName();
-                    Microservice microservice = findService(span.getServiceName());
-                    Operation operation = findOperation(operationName, microservice);
                     operation.setCircuitBreaker(new CircuitBreaker());
+                } else {
+                    operation.setCircuitBreaker(null);
                 }
 
                 boolean spanMatchesService = span.getServiceName().equals(service.getName());
@@ -189,7 +192,7 @@ public class Extractor {
                     String parentServiceName = refSpan.getServiceName();
                     String parentOperationName = refSpan.getOperationName();
 
-                    if (parentOperationName.equals("GET")) {
+                    if (parentOperationName.equals("GET") || parentOperationName.equals("POST") || parentOperationName.equals("PATCH")) {
                         return getParent(refSpan, traces);
                     }
 
@@ -298,6 +301,7 @@ public class Extractor {
             System.out.println("Getting operations for service " + ms.getName() + " ...");
             extractor.getOperations(ms);
         }
+
 
         // Operation dependencies for every service
         for (Microservice ms : extractor.getServices()) {

@@ -175,7 +175,6 @@ public class InputParser {
                             boolean value = tag.get("value").getAsBoolean();
                             newSpan.setCircuitBreakerFallback(value);
                         }
-
                     }
 
                     // Get processID
