@@ -1,0 +1,135 @@
+{
+  "microservices": [
+    {
+      "name": "books",
+      "instances": 1,
+      "patterns": [],
+      "capacity": 1000,
+      "operations": [
+        {
+          "name": "books",
+          "demand": 100,
+          "dependencies": []
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "instances": 3,
+      "patterns": [],
+      "capacity": 1000,
+      "operations": [
+        {
+          "name": "authentication",
+          "demand": 100,
+          "dependencies": []
+        },
+        {
+          "name": "users",
+          "demand": 100,
+          "dependencies": []
+        }
+      ]
+    },
+    {
+      "name": "frontend",
+      "instances": 2,
+      "patterns": [],
+      "capacity": 1000,
+      "operations": [
+        {
+          "name": "getUsers",
+          "demand": 100,
+          "circuitBreaker": {
+            "rollingWindow": 10,
+            "requestVolumeThreshold": 20,
+            "errorThresholdPercentage": 0.5,
+            "timeout": 1,
+            "sleepWindow": 5
+          },
+          "dependencies": [
+            {
+              "service": "users",
+              "operation": "authentication",
+              "probability": 1.0
+            },
+            {
+              "service": "users",
+              "operation": "users",
+              "probability": 1.0
+            }
+          ]
+        },
+        {
+          "name": "createBook",
+          "demand": 100,
+          "circuitBreaker": {
+            "rollingWindow": 10,
+            "requestVolumeThreshold": 20,
+            "errorThresholdPercentage": 0.5,
+            "timeout": 1,
+            "sleepWindow": 5
+          },
+          "dependencies": [
+            {
+              "service": "books",
+              "operation": "books",
+              "probability": 1.0
+            },
+            {
+              "service": "users",
+              "operation": "authentication",
+              "probability": 1.0
+            }
+          ]
+        },
+        {
+          "name": "createUser",
+          "demand": 100,
+          "circuitBreaker": {
+            "rollingWindow": 10,
+            "requestVolumeThreshold": 20,
+            "errorThresholdPercentage": 0.5,
+            "timeout": 1,
+            "sleepWindow": 5
+          },
+          "dependencies": [
+            {
+              "service": "users",
+              "operation": "authentication",
+              "probability": 1.0
+            },
+            {
+              "service": "users",
+              "operation": "users",
+              "probability": 1.0
+            }
+          ]
+        },
+        {
+          "name": "getCatalog",
+          "demand": 100,
+          "circuitBreaker": {
+            "rollingWindow": 10,
+            "requestVolumeThreshold": 20,
+            "errorThresholdPercentage": 0.5,
+            "timeout": 1,
+            "sleepWindow": 5
+          },
+          "dependencies": [
+            {
+              "service": "books",
+              "operation": "books",
+              "probability": 1.0
+            },
+            {
+              "service": "users",
+              "operation": "authentication",
+              "probability": 1.0
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

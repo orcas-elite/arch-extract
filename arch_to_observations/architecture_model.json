@@ -7,7 +7,7 @@
       "capacity": 1000,
       "operations": [
         {
-          "name": "a",
+          "name": "a1",
           "demand": 100,
           "circuitBreaker": {
             "rollingWindow": 10,
@@ -19,18 +19,18 @@
           "dependencies": [
             {
               "service": "B",
-              "operation": "c",
+              "operation": "b1",
               "probability": 1.0
             },
             {
               "service": "C",
-              "operation": "e",
+              "operation": "c1",
               "probability": 1.0
             }
           ]
         },
         {
-          "name": "b",
+          "name": "a2",
           "demand": 100,
           "circuitBreaker": {
             "rollingWindow": 10,
@@ -42,38 +42,7 @@
           "dependencies": [
             {
               "service": "C",
-              "operation": "f",
-              "probability": 1.0
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "name": "B",
-      "instances": 1,
-      "patterns": [],
-      "capacity": 1000,
-      "operations": [
-        {
-          "name": "c",
-          "demand": 100,
-          "circuitBreaker": {
-            "rollingWindow": 10,
-            "requestVolumeThreshold": 20,
-            "errorThresholdPercentage": 0.5,
-            "timeout": 1,
-            "sleepWindow": 5
-          },
-          "dependencies": [
-            {
-              "service": "D",
-              "operation": "g",
-              "probability": 1.0
-            },
-            {
-              "service": "E",
-              "operation": "h",
+              "operation": "c2",
               "probability": 1.0
             }
           ]
@@ -87,9 +56,34 @@
       "capacity": 1000,
       "operations": [
         {
-          "name": "g",
+          "name": "d1",
           "demand": 100,
           "dependencies": []
+        }
+      ]
+    },
+    {
+      "name": "B",
+      "instances": 1,
+      "patterns": [],
+      "capacity": 1000,
+      "operations": [
+        {
+          "name": "b1",
+          "demand": 100,
+          "circuitBreaker": null,
+          "dependencies": [
+            {
+              "service": "D",
+              "operation": "d1",
+              "probability": 1.0
+            },
+            {
+              "service": "E",
+              "operation": "e1",
+              "probability": 1.0
+            }
+          ]
         }
       ]
     },
@@ -100,12 +94,12 @@
       "capacity": 1000,
       "operations": [
         {
-          "name": "h",
+          "name": "e1",
           "demand": 100,
           "dependencies": []
         },
         {
-          "name": "i",
+          "name": "e2",
           "demand": 100,
           "dependencies": []
         }
@@ -118,27 +112,21 @@
       "capacity": 1000,
       "operations": [
         {
-          "name": "e",
+          "name": "c2",
           "demand": 100,
-          "circuitBreaker": {
-            "rollingWindow": 10,
-            "requestVolumeThreshold": 20,
-            "errorThresholdPercentage": 0.5,
-            "timeout": 1,
-            "sleepWindow": 5
-          },
+          "dependencies": []
+        },
+        {
+          "name": "c1",
+          "demand": 100,
+          "circuitBreaker": null,
           "dependencies": [
             {
               "service": "E",
-              "operation": "i",
+              "operation": "e2",
               "probability": 1.0
             }
           ]
-        },
-        {
-          "name": "f",
-          "demand": 100,
-          "dependencies": []
         }
       ]
     }
